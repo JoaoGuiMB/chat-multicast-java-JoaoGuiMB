@@ -25,9 +25,10 @@ public class UDPServer {
 				aSocket = new DatagramSocket(6789);
 
 				System.out.println("Servidor: ouvindo porta UDP/6789.");
-				byte[] buffer = new byte[1000];
+
 
 				while (true) {
+					byte[] buffer = new byte[1000];
 					DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 					aSocket.receive(request);
 
@@ -66,6 +67,8 @@ public class UDPServer {
 				return listRooms(message);
 			case "3":
 				return getRoomIp(message);
+			case "4":
+				return removeUserFromRoom(message);
 			default:
 				return "Fim";
 		}
@@ -83,7 +86,7 @@ public class UDPServer {
 		rooms.add(new Room(rooms.size() + 1, roomName, newIp));
 		System.out.println("Numéro de salas: " + rooms.size());
 
-		return "Sala criada com sucesso";
+		return listRooms(message);
 	}
 
 	public static String listRooms(String message) {
@@ -101,12 +104,27 @@ public class UDPServer {
 		for(int i = 0; i < rooms.size(); i++) {
 			System.out.println(roomName);
 			if(roomName.equals(rooms.get(i).getName())) {
-				rooms.get(i).addUser(userName);
+				if(!rooms.get(i).userIsAleradyInRoom(userName)) {
+					rooms.get(i).addUser(userName);
+				}
 				String returnRoom = rooms.get(i).getIpAddress() + rooms.get(i).getAllUsers();
 				System.out.println(returnRoom);
 				return returnRoom;
 			}
 		}
 		return "Room not find";
+	}
+
+	public static String removeUserFromRoom(String message) {
+		System.out.println(message);
+		String[] splitedMessage = message.split(";");
+		String ipAddress = splitedMessage[1];
+		String userName = splitedMessage[2];
+		for (int i = 0; i < rooms.size(); i ++) {
+			if(rooms.get(i).getIpAddress().equals(ipAddress)) {
+				rooms.get(i).removeUser(userName);
+			}
+		}
+		return "Usuário removido com sucesso";
 	}
 }

@@ -54,6 +54,14 @@ public class Room {
         return  returnUsers;
     }
 
+    public boolean userIsAleradyInRoom(String name) {
+        return users.contains(name);
+    }
+
+    public void removeUser(String name) {
+        users.remove(name);
+    }
+
 
     @Override
     public String toString() {

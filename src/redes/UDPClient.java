@@ -50,16 +50,16 @@ public class UDPClient {
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 
 			aSocket.receive(reply);
-			if(data.equals("2;")) {
+			if(data.equals("2;") ||data.split(";")[0].equals("1") ) {
 				receiveRooms(new String(reply.getData()).trim());
 				printRooms();
 			}
 			if(data.split(";")[0].equals("3")) {
 				System.out.println(data.split(";")[0].equals("3"));
+
 				enterRoom(new String(reply.getData()).trim());
 			}
 
-			System.out.println("Resposta: " + new String(reply.getData()).trim());
 
 		} catch (SocketException e) {
 			System.out.println("Socket: " + e.getMessage());
@@ -145,9 +145,11 @@ public class UDPClient {
 	}
 
 	public static void printRooms() {
+		System.out.println("====Salas====");
 		for(int i = 0; i < rooms.size(); i++) {
 			System.out.println(rooms.get(i).getId() + " - " + rooms.get(i).getName());
 		}
+		System.out.println("=============");
 	}
 
 	public static String chooseRoom(int option) {
@@ -169,8 +171,6 @@ public class UDPClient {
 			DatagramPacket userSendMessage = new DatagramPacket(messageByte, messageByte.length, ipAddress, MULTCAST_PORT);
 			try {
 				mSocket.send(userSendMessage);
-				System.out.println(auxMessage);
-
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -178,14 +178,14 @@ public class UDPClient {
 			if(auxMessage.equals(String.valueOf(0))) {
 				leaveChat = true;
 			}
-			//System.out.println(auxMessage.split(";")[1]);
+
 
 			userMessage = "";
 		} while(!leaveChat);
 
 	}
 
-	public static void listenRoom(MulticastSocket mSocket) {
+	public static void listenRoom(MulticastSocket mSocket, InetAddress ipAddress) {
 		new Thread(() -> {
 			while(true) {
 				byte[] buffer = new byte[1000];
@@ -194,6 +194,8 @@ public class UDPClient {
 					mSocket.receive(receivedMessage);
 					String userMessage = new String(receivedMessage.getData());
 					String[] splitedMessage = userMessage.split(";");
+
+
 					System.out.println(splitedMessage[0] + ": " + splitedMessage[1]);
 
 				} catch (IOException e) {
@@ -218,11 +220,13 @@ public class UDPClient {
 			System.out.println("Bem vindo à sala " + userName + "!");
 			System.out.println("Membros: " + usersList);
 			System.out.println("Digite sua fala: ");
-			listenRoom(mSocket);
+			listenRoom(mSocket, roomGroup);
 
 
 			sendMessage(mSocket, roomGroup);
-
+			mSocket.leaveGroup(roomGroup);
+			String leaveChatData = "4;" + String.valueOf(ipAddress) + ";"+ userName;
+			clientServer(leaveChatData);
 
 		} catch (IOException e) {
 			e.printStackTrace();
