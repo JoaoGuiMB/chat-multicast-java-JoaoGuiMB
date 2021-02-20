@@ -12,7 +12,6 @@
 
 ## Como usar
 
-***
 
 1) Clone o repositório
 
@@ -33,14 +32,12 @@
 
 ## Classes
 
-***
 - **Client**: Gerencia os comando de entrada do usuário e faz o envio das informações para o servidor
 - **Server**: Cria um server UDP, possui a lógica de gerenciar as salas e chat de acordo com os comandos enviados pelo Cliente
 - **Room**: Modelo das salas de chat, possui os atributos: id, nome, endereço, lista de usuários
 
 ## Protocolo
 
-***
 
 O protocolo para a comunicação entre o Client e o Servidor segue o formato "opção;dados", em que a opção é um número natural, referente ao comando dado pelo cliente e os dados é a informação enviada, por exemplo:
 
@@ -52,7 +49,6 @@ O número 1 é a opção de criar uma sala, e o segundo parâmtro é o nome dess
 
 ## Comandos
 
-***
 
 - **Criar Sala**: representado pelo valor **1** no menu inicial do sistema, ápos isso o usuário informará o nome da nova sala;
 
