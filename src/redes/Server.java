@@ -9,7 +9,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UDPServer {
+public class Server {
 
 	private static List<Room> rooms = new ArrayList<Room>();
 	private static DatagramSocket aSocket = null;
